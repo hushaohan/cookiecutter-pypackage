@@ -8,28 +8,9 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
-
 requirements = [
-    {%- if cookiecutter.command_line_interface|lower == 'click' %}
-    'Click>=6.0',
-    {%- endif %}
+    'click',
     # TODO: put package requirements here
-]
-
-setup_requirements = [
-{%- if cookiecutter.use_pytest == 'y' %}
-    'pytest-runner',
-{%- endif %}
-    # TODO({{ cookiecutter.github_username }}): put setup requirements (distutils extensions, etc.) here
-]
-
-test_requirements = [
-{%- if cookiecutter.use_pytest == 'y' %}
-    'pytest',
-{%- endif %}
-    # TODO: put package test requirements here
 ]
 
 {%- set license_classifiers = {
@@ -44,31 +25,34 @@ setup(
     name='{{ cookiecutter.project_slug }}',
     version='{{ cookiecutter.version }}',
     description="{{ cookiecutter.project_short_description }}",
-    long_description=readme + '\n\n' + history,
+    long_description=readme + '\n',
     author="{{ cookiecutter.full_name.replace('\"', '\\\"') }}",
-    author_email='{{ cookiecutter.email }}',
-    url='https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug }}',
+    {%- if cookiecutter.project_type == 'Personal' %}
+    author_email='{{ cookiecutter.personal_email }}',
+    url='https://github.com/{{ cookiecutter.personal_github_username }}/{{ cookiecutter.project_slug }}',
+    {%- elif cookiecutter.project_type == 'Work' %}
+    author_email='{{ cookiecutter.work_email }}',
+    url='https://{{ cookiecutter.work_github_url }}/{{ cookiecutter.work_github_username }}/{{ cookiecutter.project_slug }}',
+    {%- endif %}
     packages=find_packages(include=['{{ cookiecutter.project_slug }}']),
-    {%- if 'no' not in cookiecutter.command_line_interface|lower %}
     entry_points={
         'console_scripts': [
-            '{{ cookiecutter.project_slug }}={{ cookiecutter.project_slug }}.cli:main'
+            '{{ cookiecutter.project_slug }}={{ cookiecutter.project_slug }}.cli:entry_point'
         ]
     },
-    {%- endif %}
     include_package_data=True,
     install_requires=requirements,
-{%- if cookiecutter.open_source_license in license_classifiers %}
+    {%- if cookiecutter.open_source_license in license_classifiers %}
     license="{{ cookiecutter.open_source_license }}",
-{%- endif %}
+    {%- endif %}
     zip_safe=False,
     keywords='{{ cookiecutter.project_slug }}',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-{%- if cookiecutter.open_source_license in license_classifiers %}
+        {%- if cookiecutter.open_source_license in license_classifiers %}
         '{{ license_classifiers[cookiecutter.open_source_license] }}',
-{%- endif %}
+        {%- endif %}
         'Natural Language :: English',
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.6',
@@ -78,7 +62,4 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
-    test_suite='tests',
-    tests_require=test_requirements,
-    setup_requires=setup_requirements,
 )

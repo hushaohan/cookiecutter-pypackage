@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """Console script for {{cookiecutter.project_slug}}."""
-
 import click
+from . _module_ import _sub_command_
 
 
-@click.command()
-def main(args=None):
-    """Console script for {{cookiecutter.project_slug}}."""
-    click.echo("Replace this message by putting your code into "
-               "{{cookiecutter.project_slug}}.cli.main")
-    click.echo("See click documentation at http://click.pocoo.org/")
+@click.group()
+def entry_point():
+    pass
 
 
-if __name__ == "__main__":
-    main()
+entry_point.add_command(_sub_command_)
